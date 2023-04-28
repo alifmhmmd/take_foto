@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <title>Take Foto From Camera Test</title>
+</head>
+<body>
+    <div class="card">
+        <div class="card-body">
+            <form action="save.php" method="post">
+            <div class="col-md-12" style="margin-top: 0;">
+                <label for="validationCustom03" class="form-label">Foto Ruangan</label></br>
+                <button class="btn btn-primary mb-2" id="btn_camera" type="button" onclick="camera_active()">Ambil Gambar</button>
+                <button class="btn btn-primary mb-2" id="btn_input" type="button" onclick="input_foto()">Pilih File</button>
+
+                <div class="col-md-12" id="input_foto" style="display: none; margin-top:0px;">
+                    <input type="file" class="form-control" id="foto_ruangan" name="foto_ruangan" aria-label="file example">
+                    <div id="result_input" class="mt-2"></div>
+                    <div class="invalid-feedback">
+                        Masukkan Foto Ruangan.
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6" id="ambil_gambar" style="display: none; margin-top: 0px; margin-left: 0px;">
+                        <div id="my_camera" class="col-sm-12"></div></br>
+                        <input type=button class="btn btn-primary" value="Ambil Gambar" onclick="take_snapshot()">
+                        <input type="hidden" name="take_foto" class="image-tag">
+                    </div>
+                    <div class="col-sm-6 mt-2">
+                        <div id="results"></div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary mt-2">Simpan</button>
+            </div>
+            </form>
+        </div>
+    </div>
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    
+    <script src="webcam.min.js"></script>
+
+    <script language="JavaScript">
+        function input_foto(){
+            $("#input_foto").show();
+            $("#btn_camera").hide();
+            $("#btn_input").hide();
+        }
+        
+        function camera_active(){
+            $("#ambil_gambar").show();
+            $("#btn_camera").hide();
+            $("#btn_input").hide();
+
+            Webcam.set({
+                width: 310,
+                height: 230,
+                image_format: 'jpeg',
+                jpeg_quality: 90
+            });
+        
+            Webcam.attach( '#my_camera' );
+        }
+    
+        function take_snapshot() {
+            Webcam.snap( function(data_uri) {
+                $(".image-tag").val(data_uri);
+                var html = '';
+                html += '<img id="imgprev" src="'+data_uri+'"/>';
+                $('#results').html(html);
+                // document.getElementById('results').innerHTML = '<img id="imgprev" src="'+data_uri+'"/>';
+                $("#ambil_gambar").hide();
+            } );
+
+            // Webcam.reset();
+        }
+
+    </script>
+    
+    <script>
+        $(document).ready(function(){
+            $('#foto_ruangan').on('change', function(){
+                // alert('berubah');
+                var file = this.files[0];
+                console.log(file);
+                if(file){
+                    var reader = new FileReader();
+
+                    reader.onload = function(){
+                        // $('#foto_ruangan').hide();
+                        var html = '<img src='+reader.result+' alt="foto ruangan preview" width="310">';
+                        $('#result_input').html(html);
+                    }
+                    reader.readAsDataURL(file);
+                }
+            })
+        })
+    </script>
+</body>
+</html>
